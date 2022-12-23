@@ -11,6 +11,8 @@
                         <field name="price"/>
                         <field name="partner_id"/>
                         <field name="status"/>
+                        <field name="validity"/>
+                        <field name="date_deadline"/>
                     </group>
                 </form>
             </field>
@@ -24,6 +26,10 @@
                 <tree>
                     <field name="price"/>
                     <field name="partner_id"/>
+                    <field name="validity"/>
+                    <field name="date_deadline"/>
+                    <button name="confirm_button" type="object" icon="fa-check"/>
+                    <button name="reject_button" type="object" icon="fa-level-down"/>
                     <field name="status"/>
                 </tree>
             </field>
