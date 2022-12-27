@@ -7,13 +7,30 @@
             <field name="model">estate.property.type</field>
             <field name="arch" type="xml">
                 <form>
-                    <field name="name"/>
+                    <sheet>
+                        <div>
+                              <button type="action" name="action_show_offer" string="Offers"
+                                    class="oe_stat_button" icon="fa-calendar">
+                                  <field name="offer_ids"/>
+                              </button>
+                        </div>
+                        <group>
+                            <field name="name"/>
+                            <field name="estate_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="expected_price"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
                 </form>
             </field>
         </record>
 
 
-         <record id="estate_property_type_tree" model="ir.ui.view">
+        <record id="estate_property_type_tree" model="ir.ui.view">
             <field name="name">estate.property.type.tree</field>
             <field name="model">estate.property.type</field>
             <field name="arch" type="xml">
@@ -24,7 +41,7 @@
         </record>
 
 
-          <record id="estate_property_type_search" model="ir.ui.view">
+        <record id="estate_property_type_search" model="ir.ui.view">
             <field name="name">estate.property.type.search</field>
             <field name="model">estate.property.type</field>
             <field name="arch" type="xml">
@@ -36,7 +53,7 @@
 
 
         <record id="estate_property_type_action" model="ir.actions.act_window">
-            <field name="name">Property Types </field>
+            <field name="name">Property Types</field>
             <field name="res_model">estate.property.type</field>
             <field name="view_mode">tree,form,search</field>
         </record>

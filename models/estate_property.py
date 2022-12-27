@@ -6,6 +6,7 @@ from odoo.exceptions import ValidationError, UserError
 class EstateProperty(models.Model):
     _name = 'estate.property'
     _description = 'Estate Property'
+    _order = 'id desc'
 
     name = fields.Char(string=_('Name'), required=True)
     description = fields.Text(string=_('Description'))
@@ -22,7 +23,7 @@ class EstateProperty(models.Model):
     garden_orientation = fields.Selection([('north', 'North'),('south', 'South'),('east', 'East'), ('west', 'West')], string=_('Garden Orientation'))
     currency_id = fields.Many2one('res.currency', string="Currency", default=lambda self: self.env.ref('base.VND').id)
     active = fields.Boolean(default=False)
-    state = fields.Selection([('new', 'New'), ('offer received', 'Offer Received'), ('offer accepted', 'Offer Accepted'), ('sold', 'Sold'), ('canceled', 'Canceled')], required=True, copy=False, default='new')
+    state = fields.Selection([('new', 'New'), ('offer_received', 'Offer Received'), ('offer_accepted', 'Offer Accepted'), ('sold', 'Sold'), ('canceled', 'Canceled')], required=True, copy=False, default='new')
     property_type_id = fields.Many2one('estate.property.type')
     salesperson = fields.Many2one('res.users', string=_('Salesman'), default=lambda self:self.env.user)
     buyer = fields.Many2one('res.partner')
@@ -59,3 +60,16 @@ class EstateProperty(models.Model):
             if record.state == 'sold':
                 raise UserError('Sold property cannot be canceled')
             record.state = 'canceled'
+
+    @api.constrains('expected_price')
+    def constrains_price(self):
+        for record in self:
+            if record.expected_price < 0 or record.selling_price <0:
+                raise ValidationError('The expected price must be strictly positive')
+
+    @api.constrains('selling_price')
+    def constrains_offers(self):
+        for record in self:
+            if record.selling_price:
+                if record.selling_price < record.expected_price * 90 / 100:
+                        raise ValidationError('The selling price cannot be lower than 90% of the expected price')
