@@ -17,11 +17,11 @@
                             <h1>
                                 <field name="name"/>
                             </h1>
-                            <field name="tag_ids" widget="many2many_tags"/>
+                            <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}"/>
                         </div>
                         <group>
                             <group>
-                                <field name="property_type_id"/>
+                                <field name="property_type_id" options="{'no_create': True, 'no_create_edit': True}"/>
                                 <field name="postcode"/>
                                 <field name="date_availability"/>
                             </group>
@@ -40,8 +40,8 @@
                                     <field name="facades"/>
                                     <field name="garage" widget="boolean_toggle"/>
                                     <field name="garden" widget="boolean_toggle"/>
-                                    <field name="garden_area"/>
-                                    <field name="garden_orientation"/>
+                                    <field name="garden_area" attrs="{'invisible': [('garden', '=', False)]}"/>
+                                    <field name="garden_orientation" attrs="{'invisible': [('garden', '=', False)]}"/>
                                     <field name="currency_id" invisible="1"/>
                                     <field name="total_area"/>
                                     <field name="active"/>
@@ -54,7 +54,17 @@
                                 </group>
                             </page>
                             <page string="Offers">
-                                <field name="offer_ids"/>
+                                <field name="offer_ids" attrs="{'readonly': [('state', 'in', ['offer_accepted', 'sold', 'canceled'])]}" >
+                                    <tree editable="bottom" decoration-success="status == 'accepted'" decoration-danger="status == 'refused'">
+                                        <field name="price"/>
+                                        <field name="partner_id"/>
+                                        <field name="validity"/>
+                                        <field name="date_deadline" optional="hide"/>
+                                        <button name="confirm_button" type="object" icon="fa-check" attrs="{'invisible': [('status', 'in', ['accepted', 'refused'])]}"/>
+                                        <button name="reject_button" type="object" icon="fa-level-down" attrs="{'invisible': [('status', 'in', ['accepted', 'refused'])]}"/>
+                                        <field name="status" invisible="1"/>
+                                    </tree>
+                                </field>
                             </page>
                         </notebook>
                     </sheet>
@@ -67,7 +77,7 @@
             <field name="name">estate.property.tree</field>
             <field name="model">estate.property</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree decoration-success="state == 'offer_received'" decoration-muted="state == 'sold'" decoration-bf="state == 'offer_accepted'">
                     <field name="name"/>
                     <field name="description"/>
                     <field name="postcode" optional="hide"/>
@@ -83,6 +93,7 @@
                     <field name="garden_orientation" optional="hide"/>
                     <field name="total_area"/>
                     <field name="currency_id" invisible="1"/>
+                    <field name="state" invisible="1"/>
                 </tree>
             </field>
         </record>
